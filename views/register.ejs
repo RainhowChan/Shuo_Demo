@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+
+    <title>班级说说</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="http://v3.bootcss.com/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/jumbotron.css" rel="stylesheet">
+    <style>
+        #register-tip {
+            display: none;
+            position: absolute;
+            width: 40%;
+            top: 90px;
+            left: 0;
+            margin: 0 15px;
+            border: 1px solid;
+            border-radius: 3px;
+        }
+
+        .failed {
+            color: #a94442;
+            background-color: #f2dede;
+        }
+
+        .success {
+            color: #333;
+            background-color: #dff0d8;
+        }
+    </style>
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/ie8-responsive-file-warning.js"></script>
+    <![endif]-->
+    <script src="http://v3.bootcss.com/assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<% include header.ejs %>
+
+<div class="container jumbotron">
+    <div class="row col-lg-6">
+        <h1>欢迎注册</h1>
+        <div class="alert" role="alert" id="register-tip">
+        </div>
+        <form style="padding-top: 50px">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" class="form-control" id="username" placeholder="username">
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" class="form-control" id="password" placeholder="Password">
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="check">我遵守注册规定
+                </label>
+            </div>
+            <button type="button" class="btn btn-default" id="register">注册</button>
+        </form>
+
+    </div>
+
+
+</div>
+
+
+<hr>
+
+<footer>
+    <p>&copy; 2016 Company, Inc.</p>
+</footer>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="http://v3.bootcss.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+
+<script type="text/javascript">
+    $('#register').on('click', function () {
+        var check = document.getElementById('check').checked;
+        if (!check) {
+            $('#register-tip').addClass('failed').text("请先同意注册规定").fadeIn();
+            return;
+        }
+        var username = $('#username').val();
+        var password = $('#password').val();
+
+        if (checkRegist(username, password)) {
+            $.post('/doregister', {
+                username: username,
+                password: password
+            }, function (result) {
+                if (result.status === 200) { //成功
+                    $('#username')[0].value='';
+                    $('#password')[0].value='';
+                    $('#register-tip').addClass('success').text(result.result).fadeIn();
+                } else if (result.status === 400) { //用户输入导致的错误
+                    $('#register-tip').addClass('failed').text(result.result).fadeIn();
+                } else if (result.status === 500) { //服务器自身的错误
+                    $('#register-tip').addClass('failed').text(result.result).fadeIn();
+                }
+
+            });
+        }
+    });
+    $('#register-tip').on('click', function () {
+        $(this).fadeOut();
+    });
+
+    function checkRegist(username, password) {
+        if (username && username.length > 3 && username.length < 12) {
+            if (password && password.length > 3 && password.length < 12) {
+                return true;
+            } else {
+                $('#register-tip').addClass('failed').text("密码不符合要求").fadeIn();
+                return false;
+            }
+        } else {
+            $('#register-tip').addClass('failed').text("用户名不符合要求").fadeIn();
+            return false;
+        }
+    }
+
+</script>
+</body>
+</html>

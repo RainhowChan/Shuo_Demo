@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Aspect Ratio with Preview Pane | Jcrop Demo</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="/css/jquery.Jcrop.css">
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.Jcrop.js"></script>
+    <script type="text/javascript" src="/js/xiaoguo.js"></script>
+</head>
+<body>
+
+<img src="/<%= userAvatar%>" id="target" alt="[Jcrop Example]"/>
+
+<div id="preview-pane">
+    <div class="preview-container">
+        <img src="/<%= userAvatar%>" class="jcrop-preview" alt="Preview" />
+    </div>
+</div>
+
+<button type="button" class="btn btn-large btn-primary" id="btn" style="position:absolute;top: 300px;right: 50px;">剪裁！！</button>
+
+
+<script type="text/javascript">
+    $("#btn").click(function () {
+        var w = parseInt($(".jcrop-holder>div:first").css("width"));
+        var h = parseInt($(".jcrop-holder>div:first").css("height"));
+        var x = parseInt($(".jcrop-holder>div:first").css("left"));
+        var y = parseInt($(".jcrop-holder>div:first").css("top"));
+        if(w) {
+            $.get("/docut",{
+                "w" : w,
+                "h" : h,
+                "x" : x,
+                "y" : y
+            },function(result){
+                if(result.status===200) {
+                    alert(result.result+",请跳转到首页");
+                    setTimeout(function () {
+                        window.location.href = '/';
+                    }, 0);
+                }else{
+                    alert(result.result);
+                }
+            });
+        }else{
+            alert("请先选取区域");
+        }
+
+    });
+</script>
+</body>
+</html>
+

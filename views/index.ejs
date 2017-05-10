@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/favicon.ico">
+
+    <title>班级说说</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="http://v3.bootcss.com/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/jumbotron.css" rel="stylesheet">
+    <link href="/css/header.css" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/ie8-responsive-file-warning.js"></script>
+    <![endif]-->
+    <script src="http://v3.bootcss.com/assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<% include header.ejs %>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+    <div class="container">
+        <% if(!login){%>
+        <div class="row">
+            <div class="col-sm-9">
+                <h1>欢迎！</h1>
+                <p>
+                    较高级复杂的劳动，是这样一种劳动力的表现，这种劳动力比较普通的劳动力需要较高的教育费用，它的生产需要花费较多的劳动时间。因此，具有较高的价值。
+                </p>
+                <p style="text-align: right"> —— 马克思</p>
+
+            </div>
+            <div class="col-sm-3">
+                <form style="padding-top: 50px">
+                    <h4>已有账号登陆</h4>
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input type="text" class="form-control" id="username" placeholder="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password">
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary" id="login">登陆</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <% }else{%>
+        <div class="row">
+            <div class="col-md-6 col-lg-8">
+                <h1>欢迎！</h1>
+                <p>
+                    较高级复杂的劳动，是这样一种劳动力的表现，这种劳动力比较普通的劳动力需要较高的教育费用，它的生产需要花费较多的劳动时间。因此，具有较高的价值。
+                </p>
+                <p style="text-align: right"> —— 马克思</p>
+            </div>
+            <div class="col-md-6 col-lg-4" style="padding-top: 50px">
+                <h4>发表说说</h4>
+                <textarea name="comment" class="form-control" cols="80" rows="4" style="resize:none;"
+                          id="shuoshuo"></textarea>
+                <button type="button" class="btn btn-primary" id="publish" style="margin-top: 20px;">发表</button>
+            </div>
+        </div>
+        <% }%>
+    </div>
+</div>
+
+
+<script type="text/template" id="comment-template">
+    <div class="item col-sm-6 col-xs-12 col-lg-4">
+        <div>
+            <img src="{{= userAvatar}}" alt="{{= username}}" width="50">
+            <div style="display: inline-block;">
+                <div class="username">{{= username}}</div>
+                <div class="time">{{= time}}</div>
+            </div>
+
+        </div>
+        <div class="caption">
+            <p class="content">{{= comment}}</p>
+            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+    </div>
+</script>
+<hr>
+<div class="container">
+
+    <div class="row" id="comment-container"></div>
+</div> <!-- /container -->
+<footer>
+    <p>&copy; 2016 Company, Inc.</p>
+</footer>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+<script src="/js/underscore.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="http://v3.bootcss.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+<script src="/js/header.js"></script>
+<script>
+    $('#login').on('click', function () {
+        var username = $('#username').val();
+        var password = $('#password').val();
+
+        if (checkRegist(username, password)) {
+            $.post('/dologin', {
+                username: username,
+                password: password
+            }, function (result) {
+                if (result.status === 200) { //成功
+                    alert(result.result);
+                    window.location.href = '/';
+                } else if (result.status === 400) { //用户输入导致的错误
+                    alert(result.result);
+                } else if (result.status === 500) { //服务器自身的错误
+                    alert(result.result);
+                }
+
+            });
+        }
+        function checkRegist(username, password) {
+            if (username) {
+                if (password) {
+                    return true;
+                } else {
+                    alert("请输入密码");
+                    return false;
+                }
+            } else {
+                alert("请输入用户名");
+            }
+        }
+    });
+    $('#publish').on('click', function () {
+        if (!$('#shuoshuo').val()) {
+            alert("需要先输入内容");
+        } else {
+            $.post('/doComment', {comment: $('#shuoshuo').val()}, function (result) {
+                if (result.status === 200) {
+                    $('#shuoshuo')[0].value = '';
+                    alert(result.result);
+                } else {
+                    alert(result.result);
+                }
+            });
+        }
+    });
+    $(function () {
+
+    });
+</script>
+</body>
+</html>
